@@ -1,15 +1,17 @@
-require("dotenv").config();
-const express = require("express");
-const axios = require("axios");
+import path from "path";
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+import axios from "axios";
+import dotenv from "dotenv";
+import express from "express";
 
 // Spotify stuff
+dotenv.config();
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-app.get("/tracklist", async (req, res) => {
+const app = express();
+
+app.get("/api/tracklist", async (req, res) => {
   try {
     const playlistUrl = req.query.url;
 
@@ -62,6 +64,14 @@ app.get("/tracklist", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const __dirname = path.resolve();
+
+// Serve Vue.js app
+app.use(express.static(path.join(__dirname, "frontend", "dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
 });
+
+// Run Server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, console.log(`Server running on port ${PORT}`));
