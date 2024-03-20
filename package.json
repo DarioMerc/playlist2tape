@@ -1,9 +1,12 @@
 {
   "name": "playlist2tape",
   "version": "1.0.0",
-  "description": "",
+  "description": "See if a spotify mixtape will fit on a cassette tape",
   "main": "index.js",
   "scripts": {
+    "frontend": "cd frontend && npm run serve",
+    "backend": "nodemon index.js",
+    "build": "cd frontend && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dario Mercuri",
