@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "See if a spotify mixtape will fit on a cassette tape",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "frontend": "cd frontend && npm run serve",
     "backend": "nodemon index.js",

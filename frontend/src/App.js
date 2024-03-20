@@ -16,7 +16,7 @@ export default {
 
       if (regex.test(this.url)) {
         try {
-          const response = await axios.get("http://localhost:3000/tracklist", {
+          const response = await axios.get("/api/tracklist", {
             params: {
               url: this.url,
             },
