@@ -1,0 +1,77 @@
+/* Overall app styles */
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container for the sides */
+.sides {
+  display: flex;
+  justify-content: center; /* Center the sides horizontally */
+}
+
+/* Individual side container */
+.side {
+  width: 50%; /* Each side takes half of the container */
+  padding: 10px; /* Add padding for spacing between elements */
+}
+
+/* Tracklist table styles */
+.tracklist {
+  width: 100%;
+  border-collapse: collapse; /* Collapse table borders */
+  overflow: auto;
+}
+
+.tracklist thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #eee;
+}
+/* Tracklist table row styles */
+.tracklist tr:nth-child(even) {
+  background-color: #f2f2f2; /* Alternate row background color */
+}
+
+/* Tracklist table cell styles */
+.tracklist th,
+.tracklist td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd; /* Add bottom border for each cell */
+}
+
+/* Total table styles */
+.total-table {
+  width: 100%;
+  margin-top: 10px; /* Adjust margin as needed */
+}
+
+.total-table td {
+  padding: 8px;
+}
+
+/* Scroll wrapper styles */
+.scroll-wrapper {
+  height: 250px;
+  overflow-y: auto;
+}
+tr td:nth-child(1n) {
+  width: 45%;
+}
+tr td:nth-child(2n) {
+  width: 45%;
+}
+tr td:nth-child(3n) {
+  width: 10%;
+}
+
+.red-text {
+  color: red;
+}
