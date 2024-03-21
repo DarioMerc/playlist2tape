@@ -1,0 +1,43 @@
+@import "variables";
+@import "nav";
+@import "inputs";
+@import "table";
+
+/* Overall app styles */
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  width: 100%;
+  /* display: flex;
+    flex-direction: column;
+    align-items: center; */
+}
+
+/* Container for the sides */
+.sides {
+  display: flex;
+  justify-content: center; /* Center the sides horizontally */
+}
+
+/* Individual side container */
+.side {
+  width: 50%; /* Each side takes half of the container */
+  padding: 10px; /* Add padding for spacing between elements */
+}
+
+/* WRAP TABLES IF UNDER 768px */
+@media screen and (max-width: 768px) {
+  .sides {
+    flex-wrap: wrap;
+  }
+  .side {
+    width: 100%;
+  }
+}

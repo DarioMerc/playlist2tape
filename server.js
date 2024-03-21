@@ -67,11 +67,20 @@ app.get("/api/tracklist", async (req, res) => {
 const __dirname = path.resolve();
 
 // Serve Vue.js app
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
-});
+if (process.env.NODE_ENV === "prod") {
+  app.use(express.static(path.join(__dirname, "frontend", "dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running!");
+  });
+}
 
 // Run Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, console.log(`Server running on port ${PORT}`));
+app.listen(
+  PORT,
+  console.log(`Server running in ${process.env.NODE_ENV} on port ${PORT}`)
+);

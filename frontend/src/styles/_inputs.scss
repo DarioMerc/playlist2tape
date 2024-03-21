@@ -1,0 +1,40 @@
+.input-wrapper {
+  margin: 1rem 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+}
+.label {
+  flex: 0 0 auto; /* Allow the label to shrink if needed */
+
+  display: inline;
+  margin-right: 0.5rem;
+  color: white;
+  pointer-events: none;
+}
+
+.input {
+  flex: 1;
+  font-size: 1rem;
+  padding: 8px 0;
+  color: white;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  transition: border-color 500ms;
+  background-color: transparent;
+
+  &:focus {
+    outline: none;
+    border-bottom-color: $accent-color;
+  }
+
+  &::placeholder {
+    // color: transparent;
+  }
+
+  // Hide Safari's autofill button
+  &::-webkit-contacts-auto-fill-button {
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+  }
+}

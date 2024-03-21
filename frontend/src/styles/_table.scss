@@ -1,32 +1,9 @@
-/* Overall app styles */
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Container for the sides */
-.sides {
-  display: flex;
-  justify-content: center; /* Center the sides horizontally */
-}
-
-/* Individual side container */
-.side {
-  width: 50%; /* Each side takes half of the container */
-  padding: 10px; /* Add padding for spacing between elements */
-}
-
 /* Tracklist table styles */
 .tracklist {
   width: 100%;
   border-collapse: collapse; /* Collapse table borders */
   overflow: auto;
+  border: 1px solid #ddd;
 }
 
 .tracklist thead th {
@@ -59,7 +36,7 @@
 
 /* Scroll wrapper styles */
 .scroll-wrapper {
-  height: 250px;
+  height: 675px;
   overflow-y: auto;
 }
 tr td:nth-child(1n) {
@@ -74,4 +51,10 @@ tr td:nth-child(3n) {
 
 .red-text {
   color: red;
+}
+
+@media screen and (max-height: 900px) {
+  .scroll-wrapper {
+    height: 315px;
+  }
 }

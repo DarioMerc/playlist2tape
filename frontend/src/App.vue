@@ -1,27 +1,38 @@
 <template>
-  <h1>Playlist 2 Tape</h1>
-
-  <div style="text-align: start">
-    <div>
-      <label for="">Tape Length</label>
+  <nav>
+    <div style="text-align: start">
+      <h1>Playlist 2 Tape</h1>
+      <h6>Can your playlist fit on a mixtape?</h6>
+    </div>
+    <div class="input-wrapper">
+      <label class="label" for="name">Tape Length:</label>
       <input
+        autocomplete="off"
+        class="input"
         type="text"
+        id="name"
+        placeholder="Example 90,60,etc"
         v-model="tapeLength"
-        placeholder="Example: 60, 90, etc"
       />
     </div>
-    <div>
-      <label for="">Spotify Playlist URL</label>
-      <input type="text" v-model="url" />
+
+    <div class="input-wrapper">
+      <label class="label" for="name">Spotify Playlist URL:</label>
+      <input
+        autocomplete="off"
+        class="input"
+        type="text"
+        id="name"
+        placeholder="Paste link here"
+        v-model="url"
+      />
     </div>
-  </div>
 
-  <button @click="getPlaylist">Get Playlist</button>
+    <button @click="getPlaylist">Get Playlist</button>
+  </nav>
 
-  <hr />
-
-  <div v-if="playlist" style="margin: 0">
-    <h2 style="margin: 0">{{ playlist.name }}</h2>
+  <div v-if="loaded" style="margin: 0">
+    <h2>{{ mixtape.name }}</h2>
     <div class="sides">
       <div class="side" v-for="side in mixtape.sides" :key="side.id">
         <h3 style="margin: 0">Side {{ side.id }}</h3>
@@ -65,6 +76,6 @@
 </template>
 
 <script src="./App.js"></script>
-<style>
-@import "./App.css";
+<style lang="scss">
+@import "./styles/main.scss";
 </style>

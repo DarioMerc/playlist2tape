@@ -4,11 +4,20 @@ import { Mixtape, Side } from "./models";
 export default {
   data() {
     return {
-      mixtape: null,
+      apiURL: process.env.API_URL,
+      loaded: false,
+      mixtape: {},
       playlist: null,
       tapeLength: 90,
       url: "",
     };
+  },
+  mounted() {
+    // Get previous playlist from local storage
+    if (localStorage.getItem("spotifyPlaylist") != null) {
+      this.mixtape = JSON.parse(localStorage.getItem("spotifyPlaylist"));
+      this.loaded = true;
+    }
   },
   methods: {
     async getPlaylist() {
@@ -16,11 +25,14 @@ export default {
 
       if (regex.test(this.url)) {
         try {
-          const response = await axios.get("/api/tracklist", {
-            params: {
-              url: this.url,
-            },
-          });
+          const response = await axios.get(
+            `http://localhost:3000/api/tracklist`,
+            {
+              params: {
+                url: this.url,
+              },
+            }
+          );
           this.playlist = response.data;
 
           const maxDuration = (this.tapeLength / 2) * 60 * 1000;
@@ -29,10 +41,12 @@ export default {
             this.playlist.tracklist,
             maxDuration
           );
-          this.mixtape = new Mixtape([
+          this.mixtape = new Mixtape(this.playlist.name, [
             new Side("A", sideAtracklist),
             new Side("B", sideBtracklist),
           ]);
+          localStorage.setItem("spotifyPlaylist", JSON.stringify(this.mixtape));
+          this.loaded = true;
         } catch (error) {
           console.error("Error fetching playlist:", error);
         }
