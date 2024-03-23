@@ -1,7 +1,11 @@
 import axios from "axios";
+import draggable from "vuedraggable";
 import { Mixtape, Side } from "./models";
 
 export default {
+  components: {
+    draggable,
+  },
   data() {
     return {
       apiURL: process.env.API_URL,
@@ -10,6 +14,7 @@ export default {
       playlist: null,
       tapeLength: 90,
       url: "",
+      drag: false,
     };
   },
   mounted() {

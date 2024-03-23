@@ -12,6 +12,9 @@
   z-index: 1;
   background: #eee;
 }
+tr {
+  cursor: move;
+}
 /* Tracklist table row styles */
 .tracklist tr:nth-child(even) {
   background-color: #f2f2f2; /* Alternate row background color */
@@ -38,14 +41,22 @@
 .scroll-wrapper {
   height: 675px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
+tr th:nth-child(1n),
 tr td:nth-child(1n) {
-  width: 45%;
+  width: 5%;
 }
+tr th:nth-child(2n),
 tr td:nth-child(2n) {
-  width: 45%;
+  width: 42.5%;
 }
+tr th:nth-child(3n),
 tr td:nth-child(3n) {
+  width: 42.5%;
+}
+tr th:nth-child(4n),
+tr td:nth-child(4n) {
   width: 10%;
 }
 

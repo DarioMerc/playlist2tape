@@ -2,7 +2,7 @@
   <nav>
     <div style="text-align: start">
       <h1>Playlist 2 Tape</h1>
-      <h6>Can your playlist fit on a mixtape?</h6>
+      <h6>Can your playlist fit on a cassette tape?</h6>
     </div>
     <div class="input-wrapper">
       <label class="label" for="name">Tape Length:</label>
@@ -31,7 +31,7 @@
     <button @click="getPlaylist">Get Playlist</button>
   </nav>
 
-  <div v-if="loaded" style="margin: 0">
+  <div v-if="mixtape" style="margin: 0">
     <h2>{{ mixtape.name }}</h2>
     <div class="sides">
       <div class="side" v-for="side in mixtape.sides" :key="side.id">
@@ -40,22 +40,33 @@
           <table class="tracklist">
             <thead>
               <tr>
-                <th style="width: 45%">Title</th>
+                <th>#</th>
+                <th>Title</th>
                 <th>Artist</th>
                 <th>Duration</th>
               </tr>
             </thead>
-            <tbody>
-              <tr v-for="track in side.tracklist" :key="track.href">
-                <td>{{ track.title }}</td>
-                <td>{{ track.artist }}</td>
-                <td>{{ formatDuration(track.duration_ms) }}</td>
-              </tr>
-            </tbody>
+            <draggable
+              :list="side.tracklist"
+              itemKey="href"
+              tag="tbody"
+              :animation="100"
+              group="tracks"
+            >
+              <template #item="{ element, index }">
+                <tr class="list-group-item">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ element.title }}</td>
+                  <td>{{ element.artist }}</td>
+                  <td>{{ formatDuration(element.duration_ms) }}</td>
+                </tr>
+              </template>
+            </draggable>
           </table>
         </div>
         <table class="total-table">
           <tr>
+            <td></td>
             <td></td>
             <td><strong>Total Duration:</strong></td>
             <td>
