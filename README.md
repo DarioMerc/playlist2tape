@@ -1,9 +1,3 @@
 # Playlist2Tape
-https://playlist2tape.onrender.com/
-
-See if a Spotify playlist can fit on a cassette mixtape!
-
-TODO
-
-- styling and responsiveness
-- allow editing of playlist through drag & drop
+Visualize how your Spotify Playlist could be converted to a cassette tape! 
+Created with Vue.js, Node.js and Spotify Developer API.
