@@ -5,7 +5,8 @@ export class Side {
   }
 }
 export class Mixtape {
-  constructor(name, sides) {
+  constructor(id, name, sides) {
+    this.id = id;
     this.name = name;
     this.sides = sides;
   }
