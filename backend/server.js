@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import path from "path";
-import queryString from "query-string";
+import authRoutes from "./auth.js";
 
 dotenv.config();
 const app = express();
@@ -36,92 +36,17 @@ function generateRandomString(length) {
 app.get("/", (req, res) => {
   res.send("Playlist2Tape API is running!");
 });
-
-app.get("/login", async (req, res) => {
-  var state = generateRandomString(16);
-  res.cookie(stateKey, state);
-  var scope = "playlist-modify-public playlist-modify-private";
-
-  res.redirect(
-    "https://accounts.spotify.com/authorize?" +
-      queryString.stringify({
-        response_type: "code",
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state,
-      })
-  );
-});
-app.get("/callback", async (req, res) => {
-  var code = req.query.code || null;
-  var state = req.query.state || null;
-  var storedState = req.cookies ? req.cookies[stateKey] : null;
-
-  try {
-    if (state === null || state !== storedState) {
-      res.redirect(
-        "/#" +
-          queryString.stringify({
-            error: "state_mismatch",
-          })
-      );
-    } else {
-      res.clearCookie(stateKey);
-
-      const tokenResponse = await axios.post(
-        "https://accounts.spotify.com/api/token",
-        queryString.stringify({
-          code: code,
-          redirect_uri: redirect_uri,
-          grant_type: "authorization_code",
-        }),
-        {
-          headers: {
-            "content-type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${Buffer.from(
-              `${client_id}:${client_secret}`
-            ).toString("base64")}`,
-          },
-        }
-      );
-
-      if (tokenResponse.status == 200) {
-        var access_token = tokenResponse.data.access_token;
-        var refresh_token = tokenResponse.data.refresh_token;
-
-        res.redirect(
-          "http://localhost:5173/edit/#" +
-            queryString.stringify({
-              access_token: access_token,
-              refresh_token: refresh_token,
-            })
-        );
-      } else {
-        res.redirect(
-          "/#" +
-            queryString.stringify({
-              error: "invalid_token",
-            })
-        );
-      }
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error.message });
-  }
-});
+app.use(authRoutes);
 
 app.get("/api/get_playlist", async (req, res) => {
   try {
-    // Destructure the query parameters directly in the function signature
     const { url } = req.query;
-    // Destructure the token directly from the Authorization header
+
     const { authorization } = req.headers;
     const token = authorization.replace("Bearer ", "");
 
     const playlistId = url.split("/").pop();
-    // Use template literals for readability
+
     const playlistResponse = await axios.get(
       `https://api.spotify.com/v1/playlists/${playlistId}`,
       {
@@ -129,7 +54,6 @@ app.get("/api/get_playlist", async (req, res) => {
       }
     );
 
-    // Use Array.map for mapping instead of forEach
     const songs = playlistResponse.data.tracks.items.map((song) => ({
       title: song.track.name,
       artist: song.track.artists.map((artist) => artist.name).join(", "),
@@ -139,21 +63,17 @@ app.get("/api/get_playlist", async (req, res) => {
       uri: song.track.uri,
     }));
 
-    // Use object shorthand for simplicity
     const playlist = {
       id: playlistResponse.data.id,
       name: playlistResponse.data.name,
       tracklist: songs,
     };
 
-    // Use res.send() for sending JSON response
     res.send(playlist);
   } catch (error) {
-    // Use res.status().send() for sending error response
     res.status(500).send({ error: "Internal Server Error" });
   }
 });
-
 app.post("/api/update_playlist", async (req, res) => {
   try {
     const { playlistId, trackUris, accessToken } = req.body;
@@ -184,34 +104,7 @@ app.post("/api/update_playlist", async (req, res) => {
   }
 });
 
-app.get("/refresh_token", function (req, res) {
-  // requesting access token from refresh token
-  var refresh_token = req.query.refresh_token;
-  var authOptions = {
-    url: "https://accounts.spotify.com/api/token",
-    headers: {
-      Authorization:
-        "Basic " +
-        new Buffer(client_id + ":" + client_secret).toString("base64"),
-    },
-    form: {
-      grant_type: "refresh_token",
-      refresh_token: refresh_token,
-    },
-    json: true,
-  };
-
-  request.post(authOptions, function (error, response, body) {
-    if (!error && response.statusCode === 200) {
-      var access_token = body.access_token;
-      res.send({
-        access_token: access_token,
-      });
-    }
-  });
-});
-
-// Static files for production
+// Serve static files for production
 if (process.env.NODE_ENV === "prod") {
   app.use(express.static(path.join(__dirname, "frontend", "dist")));
   app.get("*", (req, res) => {

@@ -1,85 +1,96 @@
 <template>
-  <nav>
-    <h1>Playlist 2 Tape</h1>
-    <div class="input-wrapper">
-      <label class="label" for="name">Tape Length:</label>
-      <input
-        autocomplete="off"
-        class="input"
-        type="text"
-        id="name"
-        placeholder="Example 90,60,etc"
-        v-model="tapeLength"
-      />
-    </div>
+  <div class="main-container">
+    <nav>
+      <h1>Playlist 2 Tape</h1>
+      <div class="input-wrapper">
+        <label class="label" for="name">Tape Length:</label>
+        <input
+          autocomplete="off"
+          class="input"
+          type="text"
+          id="name"
+          placeholder="Example 90,60,etc"
+          v-model="tapeLength"
+        />
+      </div>
 
-    <div class="input-wrapper">
-      <label class="label" for="name">Spotify Playlist URL:</label>
-      <input
-        autocomplete="off"
-        class="input"
-        type="text"
-        id="name"
-        placeholder="Paste link here"
-        v-model="url"
-      />
-    </div>
+      <div class="input-wrapper">
+        <label class="label" for="name">Spotify Playlist URL:</label>
+        <input
+          autocomplete="off"
+          class="input"
+          type="text"
+          id="name"
+          placeholder="Paste link here"
+          v-model="url"
+        />
+      </div>
 
-    <button @click="getPlaylist">View Playlist</button>
-    <button @click="updatePlaylist">Update Playlist</button>
-  </nav>
+      <button @click="getPlaylist">View Playlist</button>
+      <button @click="updatePlaylist" :disabled="playlist === null">
+        Update Playlist
+      </button>
 
-  <h3 class="error">{{ error }}</h3>
-  <div v-if="error !== null" style="margin: 0">
-    <h2>{{ mixtape.name }}</h2>
-    <div class="sides">
-      <div class="side" v-for="side in mixtape.sides" :key="side.id">
-        <h3 style="margin: 0">Side {{ side.id }}</h3>
-        <div class="scroll-wrapper">
-          <table class="tracklist">
-            <thead>
+      <div class="copyright">
+        &copy; {{ new Date().getFullYear() }} Dario Mercuri. All rights
+        reserved.
+      </div>
+    </nav>
+
+    <div class="content">
+      <h3 class="error">{{ error }}</h3>
+      <div v-if="error !== null" style="margin: 0">
+        <h2>{{ mixtape.name }}</h2>
+        <div class="sides">
+          <div class="side" v-for="side in mixtape.sides" :key="side.id">
+            <h3 style="margin: 0">Side {{ side.id }}</h3>
+            <div class="scroll-wrapper">
+              <table class="tracklist">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Artist</th>
+                    <th>Duration</th>
+                  </tr>
+                </thead>
+                <draggable
+                  :list="side.tracklist"
+                  itemKey="href"
+                  tag="tbody"
+                  :animation="100"
+                  group="tracks"
+                >
+                  <template #item="{ element, index }">
+                    <tr class="list-group-item">
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ element.title }}</td>
+                      <td>{{ element.artist }}</td>
+                      <td>{{ formatDuration(element.duration_ms) }}</td>
+                    </tr>
+                  </template>
+                </draggable>
+              </table>
+            </div>
+            <table class="total-table">
               <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Artist</th>
-                <th>Duration</th>
+                <td></td>
+                <td></td>
+                <td><strong>Total Duration:</strong></td>
+                <td>
+                  <span
+                    :class="{
+                      'red-text':
+                        totalDuration(side.tracklist) > minToMs(tapeLength / 2),
+                    }"
+                  >
+                    {{ formatDuration(totalDuration(side.tracklist)) }}</span
+                  >/{{ formatMinute(tapeLength / 2) }}
+                </td>
               </tr>
-            </thead>
-            <draggable
-              :list="side.tracklist"
-              itemKey="href"
-              tag="tbody"
-              :animation="100"
-              group="tracks"
-            >
-              <template #item="{ element, index }">
-                <tr class="list-group-item">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ element.title }}</td>
-                  <td>{{ element.artist }}</td>
-                  <td>{{ formatDuration(element.duration_ms) }}</td>
-                </tr>
-              </template>
-            </draggable>
-          </table>
+            </table>
+          </div>
         </div>
-        <table class="total-table">
-          <tr>
-            <td></td>
-            <td></td>
-            <td><strong>Total Duration:</strong></td>
-            <td>
-              <span
-                :class="{
-                  'red-text':
-                    totalDuration(side.tracklist) > minToMs(tapeLength / 2),
-                }"
-              >
-                {{ formatDuration(totalDuration(side.tracklist)) }}</span
-              >/{{ formatMinute(tapeLength / 2) }}
-            </td>
-          </tr>
-        </table>
       </div>
     </div>
   </div>

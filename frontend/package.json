@@ -11,9 +11,10 @@
   "dependencies": {
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
-    "toastr": "^2.1.4",
+    "js-cookie": "^3.0.5",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
+    "vue-toastification": "^2.0.0-rc.5",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {

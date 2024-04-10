@@ -1,6 +1,7 @@
 import axios from "axios";
-import toastr from "toastr";
-import "toastr/build/toastr.min.css";
+import Cookies from "js-cookie";
+import { useToast } from "vue-toastification";
+import "vue-toastification/dist/index.css";
 import draggable from "vuedraggable";
 import { Mixtape, Side } from "../../models.js";
 
@@ -20,20 +21,13 @@ export default {
       error: "",
     };
   },
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   mounted() {
-    const hashFragment = window.location.hash.substr(1);
-    const params = new URLSearchParams(hashFragment);
-    this.accessToken = params.get("access_token");
-    this.refreshToken = params.get("refresh_token");
-
-    localStorage.setItem("accessToken", this.accessToken);
-    localStorage.setItem("refreshToken", this.refreshToken);
-
-    toastr.options = {
-      positionClass: "toast-top-right",
-      preventDuplicates: true,
-      timeOut: 3000, // Time duration for which the toast will be shown (in milliseconds)
-    };
+    this.accessToken = Cookies.get("access_token");
+    this.refreshToken = Cookies.get("refresh_token");
   },
   methods: {
     async getPlaylist() {
@@ -43,12 +37,12 @@ export default {
       const regex = /^https:\/\/open\.spotify\.com\/playlist\/[a-zA-Z0-9]+/;
 
       if (!this.url) {
-        console.error("Error: URL is empty.");
+        this.error = "URL is empty";
         return;
       }
 
       if (!regex.test(this.url)) {
-        console.error("Error: Invalid Spotify playlist URL.");
+        this.error = "Invalid Spotify playlist URL.";
         return;
       }
 
@@ -101,14 +95,14 @@ export default {
       }
     },
     async updatePlaylist() {
-      let trackUris = [];
-      this.mixtape.sides.forEach((side) => {
-        side.tracklist.forEach((track) => {
-          trackUris.push(track.uri);
-        });
-      });
-
       try {
+        let trackUris = [];
+        this.mixtape.sides.forEach((side) => {
+          side.tracklist.forEach((track) => {
+            trackUris.push(track.uri);
+          });
+        });
+
         const response = await axios.post(`/api/update_playlist`, {
           playlistId: this.mixtape.id,
           trackUris: trackUris,
@@ -116,10 +110,16 @@ export default {
         });
 
         if (response.status == 200) {
-          this.showToast("Playlist updated!", "success");
+          this.toast.success("Playlist Updated", {
+            position: "top-right",
+            timeout: 3000,
+          });
         }
       } catch (error) {
-        this.showToast("Error updating playlist!", "error");
+        this.toast.error("Error Updating Playlist", {
+          position: "top-right",
+          timeout: 3000,
+        });
       }
     },
     formatDuration(durationMs) {
@@ -157,9 +157,6 @@ export default {
       let seconds = minutes * 60; // Convert minutes to seconds
       let milliseconds = seconds * 1000; // Convert seconds to milliseconds
       return milliseconds;
-    },
-    showToast(message, type = "success") {
-      toastr[type](message);
     },
   },
 };

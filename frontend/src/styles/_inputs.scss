@@ -1,5 +1,5 @@
 .input-wrapper {
-  margin: 1rem 0 0.5rem 0;
+  margin: 0.5rem 0 0.5rem 0;
   // display: flex;
   align-items: center;
 }
@@ -21,6 +21,7 @@
   border-bottom: 1px solid #ddd;
   transition: border-color 500ms;
   background-color: transparent;
+  width: 100%;
 
   &:focus {
     outline: none;

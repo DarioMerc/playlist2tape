@@ -1,10 +1,10 @@
 nav {
   background-color: darken($bg-color, 2%);
   color: #fff;
-  padding: 10px;
+  padding: 0.5rem;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  width: 20%;
 }
 
 h1 {
@@ -25,7 +25,15 @@ button {
 button:hover {
   background-color: darken($accent-color, 10%);
 }
+button:disabled {
+  cursor: not-allowed;
+  background-color: darken($accent-color, 20%);
+}
 
+.copyright {
+  margin-top: auto;
+  font-size: 0.6rem;
+}
 @media screen and (max-width: 1000px) {
   nav {
     flex-direction: column;

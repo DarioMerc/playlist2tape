@@ -1,80 +1,66 @@
 import axios from "axios";
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
 import App from "./App.vue";
 import EditComponent from "./components/Edit/EditComponent.vue";
 import LoginComponent from "./components/Login/LoginComponent.vue";
 
+import Cookies from "js-cookie";
 import "./styles/main.scss";
 
-// // Set base URL for API requests
 axios.defaults.baseURL = "http://localhost:5000";
-
-// Axios interceptor for handling token refresh
-axios.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      const newAccessToken = await refreshToken();
-      if (newAccessToken) {
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-        return axios(originalRequest);
-      }
-    }
-    return Promise.reject(error);
-  }
-);
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", name: "Login", component: LoginComponent },
+    {
+      path: "/",
+      redirect: "/login",
+    },
+    { path: "/login", name: "Login", component: LoginComponent },
     {
       path: "/edit",
       name: "Edit",
       component: EditComponent,
-      beforeEnter: (to, from, next) => {
-        const accessToken = localStorage.getItem("accessToken");
-        const refreshToken = localStorage.getItem("refreshToken");
-        const hasTokensInUrl =
-          to.hash.includes("access_token=") &&
-          to.hash.includes("refresh_token=");
-
-        if (!accessToken || !refreshToken || !hasTokensInUrl) {
-          // Tokens or tokens in URL are missing, redirect to login
-          next({ name: "Login" });
-        } else {
-          next();
-        }
-      },
+      meta: { requiresAuth: true },
     },
   ],
 });
 
-async function refreshToken() {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) {
-    // Handle case where refresh token is not available
-    return null;
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requiresAuth && !Cookies.get("access_token")) {
+    const refresh_token = Cookies.get("refresh_token");
+    if (refresh_token) {
+      try {
+        const response = await axios.get("/refresh_token", {
+          params: { refresh_token },
+        });
+
+        if (response.data && response.data.access_token) {
+          // Set new access token
+          const expirationTime = new Date();
+          expirationTime.setTime(expirationTime.getTime() + 60 * 60 * 1000); // 1 hour expiry
+          Cookies.set("access_token", response.data.access_token, {
+            expires: expirationTime,
+          });
+          next();
+        } else {
+          console.error("Failed to refresh access token");
+          next("/login");
+        }
+      } catch (error) {
+        console.error("Error refreshing access token:", error);
+        next("/login");
+      }
+    } else {
+      console.error("Refresh token not found");
+      next("/login");
+    }
+  } else {
+    next();
   }
+});
 
-  try {
-    const response = await axios.post("/api/refresh_token", {
-      refresh_token: refreshToken,
-    });
-    const { access_token } = response.data;
-
-    // Update the stored access token
-    localStorage.setItem("accessToken", access_token);
-
-    return access_token;
-  } catch (error) {
-    console.error("Error refreshing token:", error);
-    return null;
-  }
-}
-
-createApp(App).use(router).mount("#app");
+createApp(App).use(router).use(Toast).mount("#app");
