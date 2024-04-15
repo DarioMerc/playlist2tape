@@ -3,6 +3,7 @@
 @import "inputs";
 @import "table";
 @import "scroll";
+@import "button";
 
 /* Overall app styles */
 html,
@@ -24,11 +25,24 @@ body {
   display: flex;
 }
 
-// @media screen and (max-width: 1000px) {
-//   .main-container {
-//     flex-wrap: wrap;
-//   }
-// }
+@media screen and (max-width: 768px) {
+  .main-container {
+    flex-wrap: wrap;
+  }
+  nav,
+  .content {
+    width: 100% !important;
+  }
+}
+
+nav {
+  background-color: darken($bg-color, 2%);
+  color: #fff;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+}
 
 .content {
   width: 80%;
@@ -77,4 +91,15 @@ a .login {
   color: white;
   font-size: 1.5rem;
   // text-decoration: none;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.modal-content {
+  background: $accent-color;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.3);
 }

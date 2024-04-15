@@ -1,33 +1,6 @@
-nav {
-  background-color: darken($bg-color, 2%);
-  color: #fff;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  width: 20%;
-}
-
 h1 {
   margin: 0;
   font-size: clamp(1rem, 2rem, 3rem);
-}
-button {
-  margin: 0.25rem;
-  padding: 0.75rem 2rem;
-  background-color: $accent-color;
-  color: #fff;
-  border: none;
-  font-weight: bold;
-
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: darken($accent-color, 10%);
-}
-button:disabled {
-  cursor: not-allowed;
-  background-color: darken($accent-color, 20%);
 }
 
 .copyright {

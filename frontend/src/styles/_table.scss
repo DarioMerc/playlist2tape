@@ -1,7 +1,7 @@
 /* Tracklist table styles */
 .tracklist {
   width: 100%;
-  border-collapse: collapse; /* Collapse table borders */
+  border-collapse: collapse;
   overflow: auto;
   // border: 1px solid #ddd;
 }
@@ -26,18 +26,19 @@
 /* Tracklist table cell styles */
 .tracklist th,
 .tracklist td {
-  padding: 8px;
+  padding: 0.5rem;
   border-bottom: 1px solid lighten($bg-color, 5%); /* Add bottom border for each cell */
 }
 
 /* Total table styles */
 .total-table {
+  border-collapse: collapse;
   width: 100%;
-  margin-top: 10px; /* Adjust margin as needed */
+  padding-right: 10px;
 }
 
 .total-table td {
-  padding: 8px;
+  padding: 0.5rem;
 }
 
 /* Scroll wrapper styles */
@@ -45,22 +46,28 @@
   height: 675px;
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: lighten($bg-color, 5%);
 }
+
 tr th:nth-child(1n),
 tr td:nth-child(1n) {
   width: 5%;
 }
 tr th:nth-child(2n),
 tr td:nth-child(2n) {
-  width: 42.5%;
+  width: 40%;
 }
 tr th:nth-child(3n),
 tr td:nth-child(3n) {
-  width: 42.5%;
+  width: 40%;
 }
 tr th:nth-child(4n),
 tr td:nth-child(4n) {
   width: 10%;
+}
+tr th:nth-child(5n),
+tr td:nth-child(5n) {
+  width: 5%;
 }
 
 .red-text {
@@ -71,4 +78,11 @@ tr td:nth-child(4n) {
   .scroll-wrapper {
     height: 315px;
   }
+}
+
+.delete {
+  color: red;
+}
+.add {
+  color: $accent-color;
 }

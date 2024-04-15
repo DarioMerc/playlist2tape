@@ -1,4 +1,8 @@
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import Toast from "vue-toastification";
@@ -6,12 +10,11 @@ import "vue-toastification/dist/index.css";
 import App from "./App.vue";
 import EditComponent from "./components/Edit/EditComponent.vue";
 import LoginComponent from "./components/Login/LoginComponent.vue";
-
-import Cookies from "js-cookie";
 import "./styles/main.scss";
 
-axios.defaults.baseURL = "http://localhost:5000";
+library.add(faXmark, faPlus);
 
+axios.defaults.baseURL = "http://localhost:5000";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -63,4 +66,8 @@ router.beforeEach(async (to, from, next) => {
   }
 });
 
-createApp(App).use(router).use(Toast).mount("#app");
+createApp(App)
+  .use(router)
+  .use(Toast)
+  .component("font-awesome-icon", FontAwesomeIcon)
+  .mount("#app");

@@ -23,7 +23,10 @@ export default {
   },
   setup() {
     const toast = useToast();
-    return { toast };
+
+    return {
+      toast,
+    };
   },
   mounted() {
     this.accessToken = Cookies.get("access_token");
@@ -56,7 +59,6 @@ export default {
           },
         });
 
-        // console.log(response.status);
         if (response.status !== 200) {
           console.error(
             `Error: Failed to fetch playlist (${response.status}).`
@@ -112,21 +114,29 @@ export default {
         if (response.status == 200) {
           this.toast.success("Playlist Updated", {
             position: "top-right",
-            timeout: 3000,
+            timeout: 5000,
+            icon: false,
           });
         }
       } catch (error) {
         this.toast.error("Error Updating Playlist", {
           position: "top-right",
-          timeout: 3000,
+          timeout: 5000,
+          icon: false,
         });
       }
     },
-    formatDuration(durationMs) {
-      const totalSeconds = Math.floor(durationMs / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
-      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    removeTrack(side, trackToRemove) {
+      if (window.confirm("Are you sure you want to delete this track?")) {
+        side.tracklist = side.tracklist.filter(
+          (track) => track.uri !== trackToRemove.uri
+        );
+        this.toast.error(`Removed ${trackToRemove.title}`, {
+          position: "top-right",
+          timeout: 5000,
+          icon: false,
+        });
+      }
     },
     splitArrayByDuration(songs, maxDuration) {
       const firstHalf = [];
@@ -147,16 +157,22 @@ export default {
     totalDuration(side) {
       return side.reduce((total, song) => total + song.duration_ms, 0);
     },
-    formatMinute(durationM) {
-      const totalSeconds = durationM * 60; // Convert minutes to seconds
+    formatDuration(durationMs) {
+      const totalSeconds = Math.floor(durationMs / 1000);
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
       return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
     },
-    minToMs(minutes) {
-      let seconds = minutes * 60; // Convert minutes to seconds
-      let milliseconds = seconds * 1000; // Convert seconds to milliseconds
+    convertMinToMs(minutes) {
+      let seconds = minutes * 60;
+      let milliseconds = seconds * 1000;
       return milliseconds;
+    },
+    formatMinute(durationM) {
+      const totalSeconds = durationM * 60;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
     },
   },
 };

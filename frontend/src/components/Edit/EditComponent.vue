@@ -26,8 +26,8 @@
         />
       </div>
 
-      <button @click="getPlaylist">View Playlist</button>
-      <button @click="updatePlaylist" :disabled="playlist === null">
+      <button class="btn" @click="getPlaylist">View Playlist</button>
+      <button class="btn" @click="updatePlaylist" :disabled="playlist === null">
         Update Playlist
       </button>
 
@@ -52,42 +52,62 @@
                     <th>Title</th>
                     <th>Artist</th>
                     <th>Duration</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <draggable
                   :list="side.tracklist"
                   itemKey="href"
                   tag="tbody"
-                  :animation="100"
+                  :animation="200"
                   group="tracks"
                 >
                   <template #item="{ element, index }">
                     <tr class="list-group-item">
-                      <td>{{ index + 1 }}</td>
+                      <td v-if="side.id == 'B'">
+                        {{ mixtape.sides[0].tracklist.length + (index + 1) }}
+                      </td>
+                      <td v-else>{{ index + 1 }}</td>
                       <td>{{ element.title }}</td>
                       <td>{{ element.artist }}</td>
                       <td>{{ formatDuration(element.duration_ms) }}</td>
+                      <td>
+                        <font-awesome-icon
+                          :icon="['fas', 'xmark']"
+                          class="delete pointer"
+                          @click="removeTrack(side, element)"
+                        />
+                      </td>
                     </tr>
                   </template>
                 </draggable>
               </table>
             </div>
             <table class="total-table">
-              <tr>
-                <td></td>
-                <td></td>
-                <td><strong>Total Duration:</strong></td>
-                <td>
-                  <span
-                    :class="{
-                      'red-text':
-                        totalDuration(side.tracklist) > minToMs(tapeLength / 2),
-                    }"
-                  >
-                    {{ formatDuration(totalDuration(side.tracklist)) }}</span
-                  >/{{ formatMinute(tapeLength / 2) }}
-                </td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td>
+                    <!-- <font-awesome-icon
+                      :icon="['fas', 'plus']"
+                      class="add pointer"
+                    /> -->
+                  </td>
+                  <td></td>
+                  <td style="text-align: end"><strong>Total:</strong></td>
+                  <td>
+                    <span
+                      :class="{
+                        'red-text':
+                          totalDuration(side.tracklist) >
+                          convertMinToMs(tapeLength / 2),
+                      }"
+                    >
+                      {{ formatDuration(totalDuration(side.tracklist)) }}</span
+                    >/{{ formatMinute(tapeLength / 2) }}
+                  </td>
+                  <td></td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
