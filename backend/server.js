@@ -103,6 +103,37 @@ app.post("/api/update_playlist", async (req, res) => {
       .json({ error: "Internal Server Error", message: error.message });
   }
 });
+app.get("/api/search", async (req, res) => {
+  try {
+    const { q } = req.query;
+    const { authorization } = req.headers;
+    const token = authorization.replace("Bearer ", "");
+
+    const response = await axios.get("https://api.spotify.com/v1/search", {
+      params: {
+        q,
+        type: "track",
+        limit: 10,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const results = response.data.tracks.items.map((song) => ({
+      title: song.name,
+      artist: song.artists.map((artist) => artist.name).join(", "),
+      album: song.album.name,
+      duration_ms: song.duration_ms,
+      href: song.href,
+      uri: song.uri,
+    }));
+
+    res.send(results);
+  } catch (error) {
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
 
 // Serve static files for production
 if (process.env.NODE_ENV === "prod") {
