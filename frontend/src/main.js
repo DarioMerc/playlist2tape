@@ -8,13 +8,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import App from "./App.vue";
-import EditComponent from "./components/Edit/EditComponent.vue";
-import LoginComponent from "./components/Login/LoginComponent.vue";
+import EditComponent from "./components/EditComponent.vue";
+import LoginComponent from "./components/LoginComponent.vue";
 import "./styles/main.scss";
 
 library.add(faXmark, faPlus);
 
 axios.defaults.baseURL = "http://localhost:5000";
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [

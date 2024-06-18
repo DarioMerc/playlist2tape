@@ -1,42 +1,11 @@
 <template>
   <div class="main-container">
-    <Modal
+    <SearchModal
       :isOpen="isModalOpened"
-      :side="'A'"
-      @modal-close="closeModal"
-      @submit="submitHandler"
-      name="first-modal"
-    >
-      <template #content>
-        <div>
-          <div class="searchbar">
-            <div class="input-wrapper">
-              <!-- <label class="label" for="name">Search Song:</label> -->
-              <input
-                autocomplete="off"
-                class="input"
-                type="text"
-                id="name"
-                placeholder="Example: whats up by 4 non blondes"
-                v-model="searchQuery"
-              />
-            </div>
-            <button class="btn" @click="searchSongs">Search</button>
-          </div>
-          <div style="text-align: start">
-            <div class="song" v-for="song in searchResults" :key="song.uri">
-              <p>{{ song.title }} by {{ song.artist }}</p>
-              <font-awesome-icon
-                :icon="['fas', 'plus']"
-                class="add pointer"
-                @click="addTrack(side, song)"
-              />
-            </div>
-          </div>
-        </div>
-      </template>
-    </Modal>
-
+      :sideToAddSong="sideToAddSong"
+      @close-modal="closeSearchModal"
+      @submit-modal="submitHandler"
+    />
     <nav>
       <h1>Playlist 2 Tape</h1>
       <div class="input-wrapper">
@@ -82,16 +51,7 @@
           <div class="side" v-for="side in mixtape.sides" :key="side.id">
             <h3 style="margin: 0">Side {{ side.id }}</h3>
             <div class="scroll-wrapper">
-              <table class="tracklist">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Artist</th>
-                    <th>Duration</th>
-                    <th></th>
-                  </tr>
-                </thead>
+              <div style="display: flex; flex-direction: column">
                 <draggable
                   :list="side.tracklist"
                   itemKey="href"
@@ -100,25 +60,15 @@
                   group="tracks"
                 >
                   <template #item="{ element, index }">
-                    <tr class="list-group-item">
-                      <td v-if="side.id == 'B'">
-                        {{ mixtape.sides[0].tracklist.length + (index + 1) }}
-                      </td>
-                      <td v-else>{{ index + 1 }}</td>
-                      <td>{{ element.title }}</td>
-                      <td>{{ element.artist }}</td>
-                      <td>{{ formatDuration(element.duration_ms) }}</td>
-                      <td>
-                        <font-awesome-icon
-                          :icon="['fas', 'xmark']"
-                          class="delete pointer"
-                          @click="removeTrack(side, element)"
-                        />
-                      </td>
-                    </tr>
+                    <track-component
+                      :side="side"
+                      :index="index"
+                      :mixtape="mixtape"
+                      :element="element"
+                    ></track-component>
                   </template>
                 </draggable>
-              </table>
+              </div>
             </div>
             <table class="total-table">
               <tbody>
@@ -127,7 +77,7 @@
                     <font-awesome-icon
                       :icon="['fas', 'plus']"
                       class="add pointer"
-                      @click="openModal"
+                      @click="openSearchModal(side)"
                     />
                   </td>
                   <td></td>
@@ -161,18 +111,20 @@ import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import draggable from "vuedraggable";
-import { Mixtape, Side } from "../../models.js";
-import Modal from "../Modal.vue";
+import { Mixtape, Side } from "../models.js";
+import Modal from "./Modal.vue";
+import SearchModal from "./SearchModal.vue";
+import TrackComponent from "./TrackComponent.vue";
 
 export default {
   components: {
     draggable,
     Modal,
+    TrackComponent,
+    SearchModal,
   },
   data() {
     return {
-      accessToken: "",
-      refreshToken: "",
       mixtape: {},
       playlist: null,
       tapeLength: 90,
@@ -182,19 +134,20 @@ export default {
           : "",
       drag: false,
       error: "",
-      searchQuery: "",
-      searchResults: [],
     };
   },
   setup() {
     const toast = useToast();
 
     const isModalOpened = ref(false);
+    const sideToAddSong = ref(undefined);
 
-    const openModal = () => {
+    const openSearchModal = (side) => {
+      sideToAddSong.value = side;
       isModalOpened.value = true;
     };
-    const closeModal = () => {
+    const closeSearchModal = () => {
+      sideToAddSong.value = undefined;
       isModalOpened.value = false;
     };
 
@@ -205,14 +158,11 @@ export default {
     return {
       toast,
       isModalOpened,
-      openModal,
-      closeModal,
+      sideToAddSong,
+      openSearchModal,
+      closeSearchModal,
       submitHandler,
     };
-  },
-  mounted() {
-    this.accessToken = Cookies.get("access_token");
-    this.refreshToken = Cookies.get("refresh_token");
   },
   methods: {
     async getPlaylist() {
@@ -237,7 +187,7 @@ export default {
             url: this.url,
           },
           headers: {
-            Authorization: `Bearer ${this.accessToken}`,
+            Authorization: `Bearer ${Cookies.get("access_token")}`,
           },
         });
 
@@ -274,9 +224,11 @@ export default {
           new Side("A", sideAtracklist),
           new Side("B", sideBtracklist),
         ]);
+
+        console.log(this.mixtape);
         localStorage.setItem("playlistUrl", this.url);
       } catch (error) {
-        this.error = "Error fetching playlist.";
+        this.error = "Error fetching playlist. Try refreshing.";
       }
     },
     async updatePlaylist() {
@@ -291,8 +243,10 @@ export default {
         const response = await axios.post(`/api/update_playlist`, {
           playlistId: this.mixtape.id,
           trackUris: trackUris,
-          accessToken: this.accessToken,
+          accessToken: Cookies.get("access_token"),
         });
+
+        console.log(response);
 
         if (response.status == 200) {
           this.toast.success("Playlist updated", {
@@ -309,40 +263,11 @@ export default {
         });
       }
     },
-    async searchSongs() {
-      try {
-        const response = await axios.get(`/api/search`, {
-          params: {
-            q: this.searchQuery,
-          },
-          headers: {
-            Authorization: `Bearer ${this.accessToken}`,
-          },
-        });
-        this.searchResults = response.data;
-      } catch (error) {
-        this.toast.error("Error searching songs", {
-          position: "top-right",
-          timeout: 5000,
-          icon: false,
-        });
-      }
-    },
+
     addTrack(side, trackToAdd) {
-      console.log(side, trackToAdd);
+      this.mixtape.sides[side.id == "A" ? 0 : 1].tracklist.push(trackToAdd);
     },
-    removeTrack(side, trackToRemove) {
-      if (window.confirm("Are you sure you want to delete this track?")) {
-        side.tracklist = side.tracklist.filter(
-          (track) => track.uri !== trackToRemove.uri
-        );
-        this.toast.error(`Removed ${trackToRemove.title}`, {
-          position: "top-right",
-          timeout: 5000,
-          icon: false,
-        });
-      }
-    },
+
     splitArrayByDuration(songs, maxDuration) {
       const firstHalf = [];
       const secondHalf = [];
@@ -353,9 +278,11 @@ export default {
           firstHalf.push(song);
           totalDuration += song.duration_ms;
         } else {
-          secondHalf.push(song);
+          break; // Exit loop once adding a song exceeds maxDuration
         }
       }
+
+      secondHalf.push(...songs.slice(firstHalf.length)); // Add remaining songs to secondHalf
 
       return [firstHalf, secondHalf];
     },

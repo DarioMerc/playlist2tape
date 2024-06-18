@@ -101,6 +101,7 @@ authRoutes.get("/callback", async (req, res) => {
 });
 
 authRoutes.get("/refresh_token", async (req, res) => {
+  console.log("REFRESHING TOKEN");
   var refresh_token = req.query.refresh_token;
   var authOptions = {
     url: "https://accounts.spotify.com/api/token",
@@ -125,6 +126,7 @@ authRoutes.get("/refresh_token", async (req, res) => {
 
     if (response.status === 200) {
       var access_token = response.data.access_token;
+      console.log(`NEW ACCSS TOKEN: ${access_token}`);
       res.send({ access_token: access_token });
     }
   } catch (error) {

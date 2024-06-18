@@ -1,10 +1,11 @@
 <script setup>
 import { onClickOutside } from "@vueuse/core";
 import { defineEmits, defineProps, ref } from "vue";
+import { Side } from "../models";
 
 const props = defineProps({
   isOpen: Boolean,
-  side: String,
+  side: Side,
 });
 
 const emit = defineEmits(["modal-close"]);
@@ -23,7 +24,7 @@ onClickOutside(target, () => emit("modal-close"));
           @click.stop="emit('modal-close')"
         />
         <div class="modal-body">
-          Add tracks to Side {{ side }}
+          Add tracks to Side {{ side.id }}
           <slot name="content"></slot>
         </div>
       </div>

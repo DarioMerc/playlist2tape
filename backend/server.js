@@ -58,6 +58,7 @@ app.get("/api/get_playlist", async (req, res) => {
       title: song.track.name,
       artist: song.track.artists.map((artist) => artist.name).join(", "),
       album: song.track.album.name,
+      art: song.track.album.images[0].url,
       duration_ms: song.track.duration_ms,
       href: song.track.href,
       uri: song.track.uri,
@@ -86,7 +87,7 @@ app.post("/api/update_playlist", async (req, res) => {
       }
     );
 
-    if (replaceResponse.status === 201) {
+    if (replaceResponse.status === 200) {
       res.json({
         success: true,
         message: "Playlist tracks replaced successfully",
@@ -103,7 +104,7 @@ app.post("/api/update_playlist", async (req, res) => {
       .json({ error: "Internal Server Error", message: error.message });
   }
 });
-app.get("/api/search", async (req, res) => {
+app.get("/api/search_songs", async (req, res) => {
   try {
     const { q } = req.query;
     const { authorization } = req.headers;
@@ -124,6 +125,7 @@ app.get("/api/search", async (req, res) => {
       title: song.name,
       artist: song.artists.map((artist) => artist.name).join(", "),
       album: song.album.name,
+      art: song.album.images[0].url,
       duration_ms: song.duration_ms,
       href: song.href,
       uri: song.uri,

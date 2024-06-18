@@ -5,6 +5,114 @@
 @import "scroll";
 @import "button";
 
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.poppins-extralight {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.poppins-light {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.poppins-medium {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.poppins-semibold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.poppins-bold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.poppins-extrabold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.poppins-black {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.poppins-thin-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.poppins-extralight-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.poppins-light-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.poppins-regular-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.poppins-medium-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.poppins-semibold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.poppins-bold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.poppins-extrabold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.poppins-black-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
 /* Overall app styles */
 html,
 body {
@@ -12,9 +120,9 @@ body {
   margin: 0;
   background: $bg-color;
   color: white;
+  font-family: "Poppins";
 }
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -65,6 +173,7 @@ a:visited {
 .side {
   width: 50%; /* Each side takes half of the container */
   padding: 10px; /* Add padding for spacing between elements */
+  display: grid;
 }
 
 /* WRAP TABLES IF UNDER 768px */
@@ -97,25 +206,6 @@ a .login {
   cursor: pointer;
 }
 
-.modal-container {
-  background: lighten($bg-color, 15%);
-  padding: 0.5rem;
-  border-radius: 0rem;
-  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.3);
-  width: 50%;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  min-height: 75%;
-  transform: translate(-50%, -50%);
-}
-
-.close {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-}
-
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -125,17 +215,42 @@ a .login {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 }
+.modal-container {
+  background: lighten($bg-color, 0%);
+  padding: 0.5rem;
+  border-radius: 0rem;
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.3);
+  width: 50%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-height: 75vh;
+  max-height: 75vh;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+.modal-content {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-scroll {
+  overflow-y: scroll; /* Allow vertical scrolling */
+  height: 55vh;
+  background-color: lighten($bg-color, 5%);
+}
+.close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
 
 .searchbar {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 1rem;
   .input-wrapper {
     width: 75%;
   }
-}
-
-.song {
-  display: flex;
-  align-items: center;
 }
